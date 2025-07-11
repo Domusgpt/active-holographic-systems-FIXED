@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parameter Visual Test</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .test-item {
+            border: 1px solid #0ff;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        
+        .test-item h3 {
+            color: #0ff;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        
+        .test-iframe {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #333;
+            background: #000;
+        }
+        
+        .parameter-info {
+            font-size: 11px;
+            margin-top: 5px;
+            color: #888;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 24px;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .control-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        
+        .test-btn {
+            background: rgba(0, 255, 255, 0.3);
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">🔬 PARAMETER VISUAL VERIFICATION TEST</div>
+    
+    <div class="control-section">
+        <h3>Quick Tests:</h3>
+        <button class="test-btn" onclick="testDensityRange()">Test Density Range</button>
+        <button class="test-btn" onclick="testSpeedRange()">Test Speed Range</button>
+        <button class="test-btn" onclick="testChaosRange()">Test Chaos Range</button>
+        <button class="test-btn" onclick="testColorRange()">Test Color Range</button>
+        <button class="test-btn" onclick="testAllGeometries()">Test All Geometries</button>
+    </div>
+    
+    <div id="testGrid" class="test-grid"></div>
+    
+    <script>
+        const baseURL = 'demo-modular.html';
+        
+        function createTest(title, params, info) {
+            const testGrid = document.getElementById('testGrid');
+            const testItem = document.createElement('div');
+            testItem.className = 'test-item';
+            
+            const queryString = new URLSearchParams(params).toString();
+            const fullURL = `${baseURL}?${queryString}&hideui=true&noaudio=true`;
+            
+            testItem.innerHTML = `
+                <h3>${title}</h3>
+                <iframe class="test-iframe" src="${fullURL}"></iframe>
+                <div class="parameter-info">${info}</div>
+            `;
+            
+            testGrid.appendChild(testItem);
+        }
+        
+        function clearTests() {
+            document.getElementById('testGrid').innerHTML = '';
+        }
+        
+        function testDensityRange() {
+            clearTests();
+            
+            // Test density from min to max
+            createTest('Density 0.1 (MIN)', 
+                { geometry: 1, density: 0.1, speed: 0.5 },
+                'Sparse particles - should see minimal points');
+                
+            createTest('Density 0.5', 
+                { geometry: 1, density: 0.5, speed: 0.5 },
+                'Half density - moderate particle count');
+                
+            createTest('Density 1.0 (DEFAULT)', 
+                { geometry: 1, density: 1.0, speed: 0.5 },
+                'Normal density - balanced visuals');
+                
+            createTest('Density 2.0', 
+                { geometry: 1, density: 2.0, speed: 0.5 },
+                'Double density - dense patterns');
+                
+            createTest('Density 3.0 (MAX)', 
+                { geometry: 1, density: 3.0, speed: 0.5 },
+                'Maximum density - very complex');
+        }
+        
+        function testSpeedRange() {
+            clearTests();
+            
+            createTest('Speed 0.1 (MIN)', 
+                { geometry: 2, density: 1.0, speed: 0.1 },
+                'Slow motion - barely moving');
+                
+            createTest('Speed 0.5 (DEFAULT)', 
+                { geometry: 2, density: 1.0, speed: 0.5 },
+                'Normal speed - comfortable motion');
+                
+            createTest('Speed 1.0', 
+                { geometry: 2, density: 1.0, speed: 1.0 },
+                'Fast - energetic movement');
+                
+            createTest('Speed 2.0 (MAX)', 
+                { geometry: 2, density: 1.0, speed: 2.0 },
+                'Maximum speed - very fast motion');
+        }
+        
+        function testChaosRange() {
+            clearTests();
+            
+            createTest('Chaos 0.0 (MIN)', 
+                { geometry: 3, density: 1.0, chaos: 0.0 },
+                'No chaos - perfectly ordered');
+                
+            createTest('Chaos 0.25', 
+                { geometry: 3, density: 1.0, chaos: 0.25 },
+                'Slight turbulence');
+                
+            createTest('Chaos 0.5', 
+                { geometry: 3, density: 1.0, chaos: 0.5 },
+                'Moderate chaos - noticeable distortion');
+                
+            createTest('Chaos 1.0 (MAX)', 
+                { geometry: 3, density: 1.0, chaos: 1.0 },
+                'Maximum chaos - highly turbulent');
+        }
+        
+        function testColorRange() {
+            clearTests();
+            
+            createTest('Red (Hue 0°)', 
+                { geometry: 2, hue: 0, saturation: 1.0, intensity: 0.8 },
+                'Pure red color');
+                
+            createTest('Green (Hue 120°)', 
+                { geometry: 2, hue: 120, saturation: 1.0, intensity: 0.8 },
+                'Pure green color');
+                
+            createTest('Blue (Hue 240°)', 
+                { geometry: 2, hue: 240, saturation: 1.0, intensity: 0.8 },
+                'Pure blue color');
+                
+            createTest('Desaturated', 
+                { geometry: 2, hue: 180, saturation: 0.2, intensity: 0.5 },
+                'Low saturation - almost grayscale');
+                
+            createTest('High Intensity', 
+                { geometry: 2, hue: 300, saturation: 0.8, intensity: 1.0 },
+                'Maximum brightness');
+                
+            createTest('Low Intensity', 
+                { geometry: 2, hue: 60, saturation: 0.8, intensity: 0.1 },
+                'Minimum brightness - very dim');
+        }
+        
+        function testAllGeometries() {
+            clearTests();
+            
+            const geometries = [
+                'TETRAHEDRON', 'HYPERCUBE', 'SPHERE', 'TORUS',
+                'KLEIN BOTTLE', 'FRACTAL', 'WAVE', 'CRYSTAL'
+            ];
+            
+            geometries.forEach((name, index) => {
+                createTest(`${index}: ${name}`, 
+                    { geometry: index, density: 1.2, speed: 0.7, chaos: 0.2 },
+                    `Geometry type ${index} with moderate parameters`);
+            });
+        }
+        
+        // Auto-run density test on load
+        window.addEventListener('load', () => {
+            setTimeout(testDensityRange, 1000);
+        });
+    </script>
+</body>
+</html>

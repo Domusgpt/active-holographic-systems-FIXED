@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEOMETRY Parameter Test</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .geometry-test {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .geometry-item {
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .geometry-item h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .geometry-preview {
+            width: 100%;
+            height: 250px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin: 10px 0;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .geometry-preview:hover {
+            border-color: #0ff;
+            background: #222;
+        }
+        
+        .geometry-preview.loading {
+            background: #333;
+            color: #ff0;
+        }
+        
+        .geometry-preview.loaded {
+            background: #000;
+        }
+        
+        .geometry-info {
+            font-size: 11px;
+            color: #ccc;
+        }
+        
+        .title {
+            text-align: center;
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            text-align: center;
+            background: rgba(0, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #0ff;
+        }
+        
+        .row-title {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #ff0;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 0, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">🔺 GEOMETRY PARAMETER TEST</div>
+    
+    <div class="instructions">
+        <h3>What each geometry should look like:</h3>
+        <p><strong>TETRAHEDRON (0):</strong> Sharp triangular/angular patterns</p>
+        <p><strong>HYPERCUBE (1):</strong> Square/cubic 4D projections</p>
+        <p><strong>SPHERE (2):</strong> Circular/radial patterns</p>
+        <p><strong>TORUS (3):</strong> Donut/ring-shaped patterns</p>
+        <p><strong>KLEIN BOTTLE (4):</strong> Complex twisted surfaces</p>
+        <p><strong>FRACTAL (5):</strong> Self-similar recursive patterns</p>
+        <p><strong>WAVE (6):</strong> Sine wave interference patterns</p>
+        <p><strong>CRYSTAL (7):</strong> Cubic lattice structures</p>
+        <p><em>Each should look visually DIFFERENT from the others</em></p>
+    </div>
+    
+    <div class="geometry-test">
+        <div class="row-title">ROW 1: GEOMETRIES 0-3</div>
+        
+        <div class="geometry-item">
+            <h3>TETRAHEDRON (0)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=0&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=0&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Sharp triangular/angular patterns<br>
+                <strong>Math:</strong> 4-vertex tetrahedron
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>HYPERCUBE (1)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=60&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Square/cubic 4D projections<br>
+                <strong>Math:</strong> 4D cube tesseract
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>SPHERE (2)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=2&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Circular/radial patterns<br>
+                <strong>Math:</strong> Distance from center
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>TORUS (3)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=3&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=180&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Donut/ring-shaped patterns<br>
+                <strong>Math:</strong> Double-radius torus
+            </div>
+        </div>
+        
+        <div class="row-title">ROW 2: GEOMETRIES 4-7</div>
+        
+        <div class="geometry-item">
+            <h3>KLEIN BOTTLE (4)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=4&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=240&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Complex twisted surfaces<br>
+                <strong>Math:</strong> Non-orientable surface
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>FRACTAL (5)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=5&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=300&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Self-similar recursive patterns<br>
+                <strong>Math:</strong> Recursive iterations
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>WAVE (6)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=6&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=45&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Sine wave interference patterns<br>
+                <strong>Math:</strong> Wave equation combinations
+            </div>
+        </div>
+        
+        <div class="geometry-item">
+            <h3>CRYSTAL (7)</h3>
+            <iframe class="geometry-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=7&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=270&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="geometry-info">
+                <strong>Expected:</strong> Cubic lattice structures<br>
+                <strong>Math:</strong> 3D grid patterns
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h3>🔍 ANALYSIS:</h3>
+        <p><strong>✅ WORKING SYSTEM:</strong> Each geometry shows clearly different patterns</p>
+        <p><strong>❌ BROKEN SYSTEM:</strong> Multiple geometries look identical</p>
+        <p><strong>⚠️ PARTIAL ISSUE:</strong> Some geometries work, others don't</p>
+        <p><em>Each geometry uses different mathematical functions, so they should look completely different</em></p>
+    </div>
+</body>
+</html>

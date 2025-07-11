@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Parametric Engine</title>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; }
+        iframe { width: 100vw; height: 100vh; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="parametric-engine.html"></iframe>
+    
+    <script>
+        console.log('Loading parametric engine...');
+        
+        window.addEventListener('error', (e) => {
+            console.error('Error:', e.message, 'at', e.filename, ':', e.lineno);
+        });
+        
+        const iframe = document.querySelector('iframe');
+        iframe.onload = () => {
+            console.log('✅ Parametric engine loaded successfully');
+            
+            setTimeout(() => {
+                try {
+                    const iframeWin = iframe.contentWindow;
+                    const iframeDoc = iframe.contentDocument;
+                    
+                    // Check for engine
+                    if (iframeWin.engine) {
+                        console.log('✅ Engine initialized');
+                        console.log('Current parameters:', iframeWin.engine.currentParams);
+                    } else {
+                        console.error('❌ Engine not found');
+                    }
+                    
+                    // Check for controls
+                    const controls = iframeDoc.querySelector('.control-panel');
+                    if (controls) {
+                        console.log('✅ Control panel found');
+                    } else {
+                        console.error('❌ Control panel not found');
+                    }
+                    
+                    // Check for preview
+                    const preview = iframeDoc.querySelector('#previewIframe');
+                    if (preview) {
+                        console.log('✅ Preview iframe found');
+                    } else {
+                        console.error('❌ Preview iframe not found');
+                    }
+                    
+                } catch (e) {
+                    console.log('Cannot access iframe (cross-origin) - this is normal if served correctly');
+                }
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

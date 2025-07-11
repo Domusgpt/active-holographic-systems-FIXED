@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systematic Test - All Geometries & Parameters</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-item {
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .test-preview {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .test-preview:hover {
+            border-color: #0ff;
+            background: #222;
+        }
+        
+        .test-preview.loading {
+            background: #333;
+            color: #ff0;
+        }
+        
+        .test-preview.loaded {
+            background: #000;
+        }
+        
+        .test-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .test-title {
+            color: #0ff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #0ff;
+        }
+        
+        .btn {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            display: block;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 100, 0, 0.3);
+            border-radius: 5px;
+            border: 1px solid #0a0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 SYSTEMATIC GEOMETRY & PARAMETER TEST</h1>
+    
+    <div class="controls">
+        <button class="btn" onclick="testAllGeometries()">TEST ALL 8 GEOMETRIES</button>
+        <button class="btn" onclick="testParameterRanges()">TEST PARAMETER RANGES</button>
+        <button class="btn" onclick="testColorSystem()">TEST COLOR SYSTEM</button>
+        <button class="btn" onclick="testInteractivity()">TEST INTERACTIVITY</button>
+        <button class="btn" onclick="clearTests()">CLEAR ALL TESTS</button>
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+    
+    <div id="testContainer">
+        <p>Click buttons to start systematic testing...</p>
+    </div>
+
+    <script>
+        let testResults = [];
+        let loadingTimeouts = new Map();
+        
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = message;
+        }
+        
+        function setupHoverLoading(previewElement) {
+            const url = previewElement.getAttribute('data-url');
+            let timeoutId = null;
+            
+            previewElement.addEventListener('mouseenter', () => {
+                if (previewElement.classList.contains('loaded')) return;
+                
+                previewElement.classList.add('loading');
+                previewElement.textContent = 'Loading...';
+                
+                // Clear any existing timeout
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+                
+                // Set a delay before starting the preview (50ms like gallery)
+                timeoutId = setTimeout(() => {
+                    // Create iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.cssText = 'border: none; width: 100%; height: 100%; background: #000;';
+                    
+                    // Replace content with iframe
+                    previewElement.innerHTML = '';
+                    previewElement.appendChild(iframe);
+                    previewElement.classList.remove('loading');
+                    previewElement.classList.add('loaded');
+                    
+                    // Store timeout reference
+                    loadingTimeouts.set(previewElement, timeoutId);
+                }, 50);
+            });
+            
+            previewElement.addEventListener('mouseleave', () => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
+                
+                // Don't unload - keep loaded for performance
+                if (previewElement.classList.contains('loading')) {
+                    previewElement.classList.remove('loading');
+                    previewElement.textContent = 'Hover to load preview';
+                }
+            });
+        }
+        
+        function testAllGeometries() {
+            updateStatus('Testing all 8 geometries...');
+            const container = document.getElementById('testContainer');
+            
+            const geometries = [
+                { id: 0, name: 'TETRAHEDRON', expected: 'Sharp angular patterns' },
+                { id: 1, name: 'HYPERCUBE', expected: '4D cube projection' },
+                { id: 2, name: 'SPHERE', expected: 'Radial circular patterns' },
+                { id: 3, name: 'TORUS', expected: 'Donut-shaped patterns' },
+                { id: 4, name: 'KLEIN BOTTLE', expected: 'Complex non-orientable surface' },
+                { id: 5, name: 'FRACTAL', expected: 'Self-similar recursive patterns' },
+                { id: 6, name: 'WAVE', expected: 'Sine wave interference' },
+                { id: 7, name: 'CRYSTAL', expected: 'Cubic lattice structures' }
+            ];
+            
+            container.innerHTML = '<h2>🔍 GEOMETRY TEST RESULTS</h2><div class="test-grid" id="geometryGrid"></div>';
+            const grid = document.getElementById('geometryGrid');
+            
+            geometries.forEach(geom => {
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                testItem.innerHTML = `
+                    <div class="test-title">${geom.name} (ID: ${geom.id})</div>
+                    <div class="test-preview" data-url="demo-modular.html?hideui=true&noaudio=true&geometry=${geom.id}&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=0&saturation=0.8&intensity=0.5">
+                        Hover to load preview
+                    </div>
+                    <div class="test-info">
+                        <strong>Expected:</strong> ${geom.expected}<br>
+                        <strong>Parameters:</strong> geometry=${geom.id}<br>
+                        <button class="btn" onclick="testGeometryDetail(${geom.id}, '${geom.name}')">TEST VARIATIONS</button>
+                    </div>
+                `;
+                grid.appendChild(testItem);
+                
+                // Add hover loading
+                const preview = testItem.querySelector('.test-preview');
+                setupHoverLoading(preview);
+            });
+            
+            updateStatus(`✅ All 8 geometries loaded. Visual inspection: Do they look different?`);
+        }
+        
+        function testGeometryDetail(geometryId, geometryName) {
+            updateStatus(`Testing ${geometryName} variations...`);
+            const container = document.getElementById('testContainer');
+            
+            const variations = [
+                { morph: 0.0, density: 1.0, name: 'Base' },
+                { morph: 0.5, density: 1.0, name: 'Morphed' },
+                { morph: 0.0, density: 2.0, name: 'High Density' },
+                { morph: 0.0, density: 0.5, name: 'Low Density' }
+            ];
+            
+            container.innerHTML = `<h2>🔍 ${geometryName} DETAIL TEST</h2><div class="test-grid" id="detailGrid"></div>`;
+            const grid = document.getElementById('detailGrid');
+            
+            variations.forEach(variation => {
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                testItem.innerHTML = `
+                    <div class="test-title">${geometryName} - ${variation.name}</div>
+                    <div class="test-preview" data-url="demo-modular.html?hideui=true&noaudio=true&geometry=${geometryId}&density=${variation.density}&speed=0.5&chaos=0.0&morph=${variation.morph}&hue=0&saturation=0.8&intensity=0.5">
+                        Hover to load preview
+                    </div>
+                    <div class="test-info">
+                        <strong>Config:</strong> density=${variation.density}, morph=${variation.morph}<br>
+                        <strong>Should show:</strong> Different pattern from base
+                    </div>
+                `;
+                grid.appendChild(testItem);
+                
+                // Add hover loading
+                const preview = testItem.querySelector('.test-preview');
+                setupHoverLoading(preview);
+            });
+            
+            updateStatus(`✅ ${geometryName} variations loaded. Do they look different?`);
+        }
+        
+        function testParameterRanges() {
+            updateStatus('Testing parameter ranges...');
+            const container = document.getElementById('testContainer');
+            
+            const parameterTests = [
+                { param: 'hue', values: [0, 60, 120, 180, 240, 300], name: 'HUE RANGE' },
+                { param: 'saturation', values: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0], name: 'SATURATION RANGE' },
+                { param: 'intensity', values: [0.1, 0.3, 0.5, 0.7, 0.9], name: 'INTENSITY RANGE' },
+                { param: 'density', values: [0.5, 1.0, 1.5, 2.0, 2.5], name: 'DENSITY RANGE' },
+                { param: 'speed', values: [0.2, 0.5, 1.0, 1.5, 2.0], name: 'SPEED RANGE' },
+                { param: 'chaos', values: [0.0, 0.25, 0.5, 0.75, 1.0], name: 'CHAOS RANGE' }
+            ];
+            
+            container.innerHTML = '<h2>🔍 PARAMETER RANGE TESTS</h2>';
+            
+            parameterTests.forEach(test => {
+                const section = document.createElement('div');
+                section.innerHTML = `
+                    <h3>${test.name}</h3>
+                    <div class="test-grid" id="grid-${test.param}"></div>
+                `;
+                container.appendChild(section);
+                
+                const grid = document.getElementById(`grid-${test.param}`);
+                
+                test.values.forEach(value => {
+                    const testItem = document.createElement('div');
+                    testItem.className = 'test-item';
+                    
+                    const baseParams = 'geometry=1&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=0&saturation=0.8&intensity=0.5';
+                    const customParams = baseParams.replace(`${test.param}=${test.param === 'hue' ? '0' : (test.param === 'saturation' || test.param === 'intensity') ? '0.8' : test.param === 'density' ? '1.0' : '0.5'}`, `${test.param}=${value}`);
+                    
+                    testItem.innerHTML = `
+                        <div class="test-title">${test.param.toUpperCase()}: ${value}</div>
+                        <div class="test-preview" data-url="demo-modular.html?hideui=true&noaudio=true&${customParams}">
+                            Hover to load preview
+                        </div>
+                        <div class="test-info">
+                            <strong>Value:</strong> ${value}<br>
+                            <strong>Expected:</strong> ${test.param === 'hue' ? 'Different color' : test.param === 'saturation' ? 'Color intensity change' : test.param === 'intensity' ? 'Brightness change' : 'Pattern change'}
+                        </div>
+                    `;
+                    grid.appendChild(testItem);
+                    
+                    // Add hover loading
+                    const preview = testItem.querySelector('.test-preview');
+                    setupHoverLoading(preview);
+                });
+            });
+            
+            updateStatus(`✅ Parameter range tests loaded. Check for visual differences across ranges.`);
+        }
+        
+        function testColorSystem() {
+            updateStatus('Testing color system...');
+            const container = document.getElementById('testContainer');
+            
+            const colorTests = [
+                { hue: 0, sat: 0.8, int: 0.5, name: 'RED' },
+                { hue: 60, sat: 0.8, int: 0.5, name: 'YELLOW' },
+                { hue: 120, sat: 0.8, int: 0.5, name: 'GREEN' },
+                { hue: 180, sat: 0.8, int: 0.5, name: 'CYAN' },
+                { hue: 240, sat: 0.8, int: 0.5, name: 'BLUE' },
+                { hue: 300, sat: 0.8, int: 0.5, name: 'MAGENTA' },
+                { hue: 0, sat: 0.2, int: 0.5, name: 'DESATURATED' },
+                { hue: 0, sat: 0.8, int: 0.2, name: 'DIM' },
+                { hue: 0, sat: 0.8, int: 0.9, name: 'BRIGHT' }
+            ];
+            
+            container.innerHTML = '<h2>🎨 COLOR SYSTEM TEST</h2><div class="test-grid" id="colorGrid"></div>';
+            const grid = document.getElementById('colorGrid');
+            
+            colorTests.forEach(color => {
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                testItem.innerHTML = `
+                    <div class="test-title">${color.name}</div>
+                    <div class="test-preview" data-url="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=${color.hue}&saturation=${color.sat}&intensity=${color.int}">
+                        Hover to load preview
+                    </div>
+                    <div class="test-info">
+                        <strong>H:</strong> ${color.hue}° <strong>S:</strong> ${color.sat} <strong>I:</strong> ${color.int}<br>
+                        <strong>Expected:</strong> ${color.name.toLowerCase()} coloring
+                    </div>
+                `;
+                grid.appendChild(testItem);
+                
+                // Add hover loading
+                const preview = testItem.querySelector('.test-preview');
+                setupHoverLoading(preview);
+            });
+            
+            updateStatus(`✅ Color system test loaded. Each should show different colors.`);
+        }
+        
+        function testInteractivity() {
+            updateStatus('Testing interactivity...');
+            const container = document.getElementById('testContainer');
+            
+            container.innerHTML = `
+                <h2>🎮 INTERACTIVITY TEST</h2>
+                <div class="test-item" style="width: 80%; margin: 20px auto;">
+                    <div class="test-title">INTERACTIVE DEMO - Move mouse over preview</div>
+                    <iframe class="test-preview" src="demo-modular.html?geometry=1&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=120&saturation=0.8&intensity=0.5" style="border: none; background: #000; height: 400px;"></iframe>
+                    <div class="test-info">
+                        <strong>Instructions:</strong><br>
+                        1. Move mouse over the preview<br>
+                        2. Click on the preview<br>
+                        3. Use arrow keys (←/→) to change variants<br>
+                        4. Press spacebar for random variant<br>
+                        <strong>Expected:</strong> Pattern should react to mouse movement and clicks
+                    </div>
+                </div>
+            `;
+            
+            updateStatus(`✅ Interactivity test loaded. Try mouse movement and keyboard controls.`);
+        }
+        
+        function clearTests() {
+            document.getElementById('testContainer').innerHTML = '<p>Click buttons to start systematic testing...</p>';
+            updateStatus('Tests cleared. Ready for new test.');
+        }
+        
+        // Auto-start with geometry test
+        setTimeout(() => {
+            testAllGeometries();
+        }, 1000);
+    </script>
+</body>
+</html>

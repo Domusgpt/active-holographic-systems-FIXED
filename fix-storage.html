@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head><title>Fix Storage</title></head>
+<body style="background:#000;color:#0ff;font-family:monospace;padding:20px;">
+    <h1>🔧 STORAGE FIXER</h1>
+    <div id="status"></div>
+    <br>
+    <button onclick="clearAll()" style="background:#f00;color:#fff;padding:10px 20px;border:none;cursor:pointer;">CLEAR ALL CUSTOM VARIATIONS</button>
+    <button onclick="check()" style="background:#0f0;color:#000;padding:10px 20px;border:none;cursor:pointer;margin-left:10px;">CHECK COUNTS</button>
+    
+    <script>
+        function check() {
+            const stored = localStorage.getItem('customHolographicVariations');
+            const status = document.getElementById('status');
+            
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    const count = data.variations ? data.variations.length : 0;
+                    status.innerHTML = `
+                        <h3>FOUND ${count} CUSTOM VARIATIONS</h3>
+                        <p>Data size: ${Math.round(stored.length/1024)}KB</p>
+                        <p>This is why your gallery shows high numbers!</p>
+                    `;
+                } catch(e) {
+                    status.innerHTML = `<h3>CORRUPTED DATA FOUND</h3><p>${e.message}</p>`;
+                }
+            } else {
+                status.innerHTML = `<h3>NO CUSTOM VARIATIONS</h3><p>Storage is clean</p>`;
+            }
+        }
+        
+        function clearAll() {
+            if (confirm('Clear all custom variations? This will reset counts to normal.')) {
+                localStorage.removeItem('customHolographicVariations');
+                alert('CLEARED! Refresh portfolio/gallery to see normal counts.');
+                check();
+            }
+        }
+        
+        // Check on load
+        check();
+    </script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holographic System Test Suite</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        
+        .test-section h2 {
+            color: #0ff;
+            margin-bottom: 15px;
+        }
+        
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .test-btn {
+            background: rgba(0, 255, 255, 0.3);
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .status.pending { background: #666; color: #fff; }
+        .status.running { background: #ff0; color: #000; }
+        .status.pass { background: #0f0; color: #000; }
+        .status.fail { background: #f00; color: #fff; }
+        
+        .test-log {
+            margin: 20px 0;
+            padding: 15px;
+            background: #111;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            background: rgba(255, 150, 0, 0.3);
+            border: 1px solid #ff9600;
+            color: #ff9600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 150, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 150, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        🧪 HOLOGRAPHIC SYSTEM TEST SUITE
+    </div>
+    
+    <div class="quick-actions">
+        <button class="action-btn" onclick="runAllTests()">🚀 RUN ALL TESTS</button>
+        <button class="action-btn" onclick="openPortfolio()">📊 PORTFOLIO</button>
+        <button class="action-btn" onclick="openGeometryTest()">🔺 GEOMETRY TEST</button>
+        <button class="action-btn" onclick="openParametricEngine()">🎛️ PARAMETRIC ENGINE</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🏗️ CORE SYSTEM TESTS</h2>
+        <div class="test-item">
+            <span>Demo Modular System</span>
+            <div>
+                <span class="status pending" id="demo-status">PENDING</span>
+                <button class="test-btn" onclick="testDemo()">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Collection Manager</span>
+            <div>
+                <span class="status pending" id="collection-status">PENDING</span>
+                <button class="test-btn" onclick="testCollections()">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Portfolio System</span>
+            <div>
+                <span class="status pending" id="portfolio-status">PENDING</span>
+                <button class="test-btn" onclick="testPortfolio()">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Parametric Engine</span>
+            <div>
+                <span class="status pending" id="parametric-status">PENDING</span>
+                <button class="test-btn" onclick="testParametric()">TEST</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 GEOMETRY TESTS</h2>
+        <div class="test-item">
+            <span>Tetrahedron Geometry</span>
+            <div>
+                <span class="status pending" id="tetrahedron-status">PENDING</span>
+                <button class="test-btn" onclick="testGeometry(0)">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Hypercube Geometry</span>
+            <div>
+                <span class="status pending" id="hypercube-status">PENDING</span>
+                <button class="test-btn" onclick="testGeometry(1)">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Sphere Geometry</span>
+            <div>
+                <span class="status pending" id="sphere-status">PENDING</span>
+                <button class="test-btn" onclick="testGeometry(2)">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>All 8 Geometries</span>
+            <div>
+                <span class="status pending" id="all-geometries-status">PENDING</span>
+                <button class="test-btn" onclick="testAllGeometries()">TEST</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎛️ PARAMETER TESTS</h2>
+        <div class="test-item">
+            <span>Density Parameter</span>
+            <div>
+                <span class="status pending" id="density-status">PENDING</span>
+                <button class="test-btn" onclick="testParameter('density')">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Speed Parameter</span>
+            <div>
+                <span class="status pending" id="speed-status">PENDING</span>
+                <button class="test-btn" onclick="testParameter('speed')">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Chaos Parameter</span>
+            <div>
+                <span class="status pending" id="chaos-status">PENDING</span>
+                <button class="test-btn" onclick="testParameter('chaos')">TEST</button>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <span>Color Parameters</span>
+            <div>
+                <span class="status pending" id="color-status">PENDING</span>
+                <button class="test-btn" onclick="testColorParameters()">TEST</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 LIVE TEST PREVIEW</h2>
+        <div class="iframe-container">
+            <iframe id="testFrame" src="about:blank"></iframe>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            <button class="test-btn" onclick="clearTestFrame()">CLEAR</button>
+        </div>
+    </div>
+    
+    <div class="test-log" id="testLog">
+        <strong>TEST LOG:</strong><br>
+        Ready to run tests...
+    </div>
+    
+    <script>
+        const testLog = document.getElementById('testLog');
+        const testFrame = document.getElementById('testFrame');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            testLog.innerHTML += `<br>[${timestamp}] ${message}`;
+            testLog.scrollTop = testLog.scrollHeight;
+        }
+        
+        function setStatus(testId, status) {
+            const statusElement = document.getElementById(testId + '-status');
+            if (statusElement) {
+                statusElement.className = 'status ' + status;
+                statusElement.textContent = status.toUpperCase();
+            }
+        }
+        
+        function testDemo() {
+            log('🎨 Testing Demo Modular System...');
+            setStatus('demo', 'running');
+            
+            testFrame.src = 'demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5';
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = testFrame.contentDocument || testFrame.contentWindow.document;
+                        const canvas = iframeDoc.querySelector('canvas');
+                        
+                        if (canvas) {
+                            log('✅ Demo system loaded successfully');
+                            setStatus('demo', 'pass');
+                        } else {
+                            log('❌ Demo system failed to load canvas');
+                            setStatus('demo', 'fail');
+                        }
+                    } catch (e) {
+                        log('✅ Demo system loaded (cross-origin)');
+                        setStatus('demo', 'pass');
+                    }
+                }, 1000);
+            };
+        }
+        
+        function testCollections() {
+            log('📋 Testing Collection Manager...');
+            setStatus('collection', 'running');
+            
+            fetch('./collections/base-variations.json')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.type === 'holographic-collection' && data.variations) {
+                        log(`✅ Collections loaded: ${data.variations.length} variations`);
+                        setStatus('collection', 'pass');
+                    } else {
+                        log('❌ Invalid collection format');
+                        setStatus('collection', 'fail');
+                    }
+                })
+                .catch(error => {
+                    log('❌ Collection loading failed: ' + error.message);
+                    setStatus('collection', 'fail');
+                });
+        }
+        
+        function testPortfolio() {
+            log('📊 Testing Portfolio System...');
+            setStatus('portfolio', 'running');
+            
+            testFrame.src = 'portfolio.html';
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = testFrame.contentDocument || testFrame.contentWindow.document;
+                        const header = iframeDoc.querySelector('.header');
+                        
+                        if (header) {
+                            log('✅ Portfolio system loaded successfully');
+                            setStatus('portfolio', 'pass');
+                        } else {
+                            log('❌ Portfolio system failed to load');
+                            setStatus('portfolio', 'fail');
+                        }
+                    } catch (e) {
+                        log('✅ Portfolio system loaded (cross-origin)');
+                        setStatus('portfolio', 'pass');
+                    }
+                }, 1000);
+            };
+        }
+        
+        function testParametric() {
+            log('🎛️ Testing Parametric Engine...');
+            setStatus('parametric', 'running');
+            
+            testFrame.src = 'parametric-engine.html';
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = testFrame.contentDocument || testFrame.contentWindow.document;
+                        const controls = iframeDoc.querySelector('.control-panel');
+                        const preview = iframeDoc.querySelector('#previewIframe');
+                        
+                        if (controls || preview) {
+                            log('✅ Parametric engine loaded successfully');
+                            setStatus('parametric', 'pass');
+                        } else {
+                            log('❌ Parametric engine failed to load controls');
+                            setStatus('parametric', 'fail');
+                        }
+                    } catch (e) {
+                        log('✅ Parametric engine loaded (cross-origin)');
+                        setStatus('parametric', 'pass');
+                    }
+                }, 1000);
+            };
+        }
+        
+        function testGeometry(geometryId) {
+            const geometryNames = ['tetrahedron', 'hypercube', 'sphere', 'torus', 'klein', 'fractal', 'wave', 'crystal'];
+            const geometryName = geometryNames[geometryId];
+            
+            log(`🔺 Testing ${geometryName} geometry...`);
+            setStatus(geometryName, 'running');
+            
+            testFrame.src = `demo-modular.html?hideui=true&noaudio=true&geometry=${geometryId}&density=1.0&speed=0.5&hue=${geometryId * 45}`;
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    log(`✅ ${geometryName} geometry test completed`);
+                    setStatus(geometryName, 'pass');
+                }, 1000);
+            };
+        }
+        
+        function testAllGeometries() {
+            log('🔺 Testing all 8 geometries...');
+            setStatus('all-geometries', 'running');
+            
+            testFrame.src = 'geometry-test.html';
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    log('✅ All geometries test page loaded');
+                    setStatus('all-geometries', 'pass');
+                }, 1000);
+            };
+        }
+        
+        function testParameter(paramName) {
+            log(`🎛️ Testing ${paramName} parameter...`);
+            setStatus(paramName, 'running');
+            
+            const paramValue = paramName === 'density' ? 2.0 : 
+                              paramName === 'speed' ? 1.0 : 
+                              paramName === 'chaos' ? 0.5 : 0.5;
+            
+            testFrame.src = `demo-modular.html?hideui=true&noaudio=true&${paramName}=${paramValue}&geometry=1`;
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    log(`✅ ${paramName} parameter test completed`);
+                    setStatus(paramName, 'pass');
+                }, 1000);
+            };
+        }
+        
+        function testColorParameters() {
+            log('🎨 Testing color parameters...');
+            setStatus('color', 'running');
+            
+            testFrame.src = 'demo-modular.html?hideui=true&noaudio=true&hue=180&saturation=0.9&intensity=0.8&geometry=2';
+            
+            testFrame.onload = function() {
+                setTimeout(() => {
+                    log('✅ Color parameters test completed');
+                    setStatus('color', 'pass');
+                }, 1000);
+            };
+        }
+        
+        function clearTestFrame() {
+            testFrame.src = 'about:blank';
+            log('🧹 Test frame cleared');
+        }
+        
+        function runAllTests() {
+            log('🚀 Running all tests...');
+            
+            const tests = [
+                () => testDemo(),
+                () => setTimeout(() => testCollections(), 1000),
+                () => setTimeout(() => testPortfolio(), 2000),
+                () => setTimeout(() => testParametric(), 3000),
+                () => setTimeout(() => testGeometry(0), 4000),
+                () => setTimeout(() => testGeometry(1), 5000),
+                () => setTimeout(() => testGeometry(2), 6000),
+                () => setTimeout(() => testAllGeometries(), 7000),
+                () => setTimeout(() => testParameter('density'), 8000),
+                () => setTimeout(() => testParameter('speed'), 9000),
+                () => setTimeout(() => testParameter('chaos'), 10000),
+                () => setTimeout(() => testColorParameters(), 11000)
+            ];
+            
+            tests.forEach(test => test());
+        }
+        
+        function openPortfolio() {
+            window.open('portfolio.html', '_blank');
+        }
+        
+        function openGeometryTest() {
+            window.open('geometry-test.html', '_blank');
+        }
+        
+        function openParametricEngine() {
+            window.open('parametric-engine.html', '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Parametric Test</title>
+    <style>
+        body { background: #000; color: #0ff; font-family: monospace; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border: 1px solid #0ff; }
+        .pass { background: rgba(0,255,0,0.2); }
+        .fail { background: rgba(255,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <h1>Direct Parametric Engine Test</h1>
+    
+    <div id="test-results"></div>
+    
+    <button onclick="testParametric()">Run Test</button>
+    
+    <script>
+        function testParametric() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '';
+            
+            // Test 1: Check if page loads
+            fetch('parametric-engine.html')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('Page Load Test', true, 'Parametric engine HTML loads');
+                        return response.text();
+                    } else {
+                        addResult('Page Load Test', false, 'Failed to load HTML');
+                        throw new Error('Page not found');
+                    }
+                })
+                .then(html => {
+                    // Test 2: Check for required elements
+                    const hasControlPanel = html.includes('control-panel');
+                    addResult('Control Panel', hasControlPanel, hasControlPanel ? 'Found control panel' : 'Missing control panel');
+                    
+                    const hasPreviewIframe = html.includes('previewIframe');
+                    addResult('Preview Frame', hasPreviewIframe, hasPreviewIframe ? 'Found preview iframe' : 'Missing preview iframe');
+                    
+                    const hasParametricEngine = html.includes('class ParametricEngine');
+                    addResult('Engine Class', hasParametricEngine, hasParametricEngine ? 'Found ParametricEngine class' : 'Missing engine class');
+                    
+                    const hasGeometryButtons = html.includes('geometry-btn');
+                    addResult('Geometry Buttons', hasGeometryButtons, hasGeometryButtons ? 'Found geometry buttons' : 'Missing geometry buttons');
+                    
+                    // Test 3: Open in new window
+                    const testWindow = window.open('parametric-engine.html', 'test', 'width=800,height=600');
+                    
+                    setTimeout(() => {
+                        try {
+                            if (testWindow && !testWindow.closed) {
+                                addResult('Window Test', true, 'Parametric engine opened successfully');
+                                testWindow.close();
+                            } else {
+                                addResult('Window Test', false, 'Failed to open window');
+                            }
+                        } catch (e) {
+                            addResult('Window Test', false, 'Error: ' + e.message);
+                        }
+                    }, 2000);
+                })
+                .catch(error => {
+                    addResult('Overall Test', false, 'Error: ' + error.message);
+                });
+        }
+        
+        function addResult(testName, passed, message) {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = 'status ' + (passed ? 'pass' : 'fail');
+            div.innerHTML = `<strong>${testName}:</strong> ${passed ? '✅' : '❌'} ${message}`;
+            results.appendChild(div);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "name": "Custom Variations",
+  "description": "User-created custom holographic variations",
+  "version": "1.0",
+  "type": "holographic-collection",
+  "profileName": "Active Holographic Systems",
+  "totalVariations": 3,
+  "created": "2025-01-11T00:00:00.000Z",
+  "filename": "custom-variations.json",
+  "variations": [
+    {
+      "id": 30,
+      "name": "High Density Crystal",
+      "isCustom": true,
+      "parameters": {
+        "geometryType": 7,
+        "density": 2.5,
+        "speed": 0.7,
+        "chaos": 0.3,
+        "morph": 0.2,
+        "hue": 240,
+        "saturation": 0.9,
+        "intensity": 0.8
+      }
+    },
+    {
+      "id": 31,
+      "name": "Chaotic Hypercube",
+      "isCustom": true,
+      "parameters": {
+        "geometryType": 1,
+        "density": 1.8,
+        "speed": 1.2,
+        "chaos": 0.7,
+        "morph": 0.5,
+        "hue": 120,
+        "saturation": 0.7,
+        "intensity": 0.6
+      }
+    },
+    {
+      "id": 32,
+      "name": "Smooth Sphere Flow",
+      "isCustom": true,
+      "parameters": {
+        "geometryType": 2,
+        "density": 1.2,
+        "speed": 0.4,
+        "chaos": 0.1,
+        "morph": 0.8,
+        "hue": 60,
+        "saturation": 0.6,
+        "intensity": 0.7
+      }
+    }
+  ]
+}

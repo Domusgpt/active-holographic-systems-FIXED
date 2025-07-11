@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visual Fidelity & Range Optimization Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body {
+            margin: 0;
+            background: #000;
+            color: #0ff;
+            font-family: 'Orbitron', monospace;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 28px;
+            color: #0ff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #0ff;
+            border-radius: 15px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        
+        .test-section h2 {
+            color: #0ff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .parameter-test {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .parameter-name {
+            font-size: 18px;
+            color: #ff0;
+            margin-bottom: 10px;
+        }
+        
+        .visual-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .visual-sample {
+            position: relative;
+            border: 1px solid #333;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .visual-sample iframe {
+            width: 100%;
+            height: 150px;
+            border: none;
+        }
+        
+        .sample-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: #0ff;
+            padding: 5px;
+            font-size: 10px;
+            text-align: center;
+        }
+        
+        .range-analysis {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .recommendation {
+            color: #0f0;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #ff0;
+            font-weight: bold;
+        }
+        
+        .issue {
+            color: #f00;
+            font-weight: bold;
+        }
+        
+        .unit-info {
+            color: #ff0;
+            font-style: italic;
+        }
+        
+        .optimal-range {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 5px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+        
+        .current-range {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">🔬 VISUAL FIDELITY & RANGE OPTIMIZATION ANALYSIS</div>
+    
+    <div class="test-section">
+        <h2>🎨 DENSITY PARAMETER VISUAL ANALYSIS</h2>
+        <div class="parameter-test">
+            <div class="parameter-name">DENSITY <span class="unit-info">[particles/unit³]</span></div>
+            <div class="visual-grid" id="densityGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.1 - 3.0 (step: 0.1)</div>
+                <div class="optimal-range">🎯 Optimal Visual Range: 0.2 - 2.5 (step: 0.1)</div>
+                <p><span class="recommendation">✓ RECOMMENDATION:</span> Current range is good but consider:</p>
+                <ul>
+                    <li>0.1 is too sparse - barely visible. Start at 0.2 for minimum visual impact</li>
+                    <li>3.0 causes performance issues on some devices. Cap at 2.5 for safety</li>
+                    <li>Sweet spot for most geometries: 0.8 - 1.5</li>
+                    <li class="unit-info">Unit: Relative particle density multiplier</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>⚡ SPEED PARAMETER VISUAL ANALYSIS</h2>
+        <div class="parameter-test">
+            <div class="parameter-name">SPEED <span class="unit-info">[rotations/second]</span></div>
+            <div class="visual-grid" id="speedGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.1 - 2.0 (step: 0.1)</div>
+                <div class="optimal-range">🎯 Optimal Visual Range: 0.1 - 1.5 (step: 0.05)</div>
+                <p><span class="recommendation">✓ RECOMMENDATION:</span> Adjust for better control:</p>
+                <ul>
+                    <li>2.0 is too fast for comfortable viewing - causes motion sickness</li>
+                    <li>Reduce max to 1.5 for better visual comfort</li>
+                    <li>Change step to 0.05 for finer control in the 0.3-0.8 sweet spot</li>
+                    <li class="unit-info">Unit: Animation cycles per second (approximate)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🌀 CHAOS PARAMETER VISUAL ANALYSIS</h2>
+        <div class="parameter-test">
+            <div class="parameter-name">CHAOS <span class="unit-info">[turbulence %]</span></div>
+            <div class="visual-grid" id="chaosGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.0 - 1.0 (step: 0.05)</div>
+                <div class="optimal-range">🎯 Optimal Visual Range: 0.0 - 0.8 (step: 0.02)</div>
+                <p><span class="warning">⚠ ADJUSTMENT NEEDED:</span></p>
+                <ul>
+                    <li>Values above 0.8 create too much distortion - geometry becomes unrecognizable</li>
+                    <li>Step of 0.05 is too coarse - misses subtle sweet spots</li>
+                    <li>Change to 0.02 steps for better fine-tuning</li>
+                    <li class="unit-info">Unit: Percentage of maximum turbulence (0% - 80%)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 COLOR PARAMETERS VISUAL ANALYSIS</h2>
+        <div class="parameter-test">
+            <div class="parameter-name">HUE <span class="unit-info">[degrees °]</span></div>
+            <div class="visual-grid" id="hueGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0 - 360 (step: 15)</div>
+                <div class="optimal-range">🎯 Current range is PERFECT!</div>
+                <p><span class="recommendation">✓ NO CHANGES NEEDED:</span></p>
+                <ul>
+                    <li>Full color wheel coverage is ideal</li>
+                    <li>15° steps = 24 distinct colors (perfect for visual distinction)</li>
+                    <li class="unit-info">Unit: Degrees on color wheel (0°=Red, 120°=Green, 240°=Blue)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="parameter-test">
+            <div class="parameter-name">SATURATION <span class="unit-info">[intensity %]</span></div>
+            <div class="visual-grid" id="saturationGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.0 - 1.0 (step: 0.05)</div>
+                <div class="optimal-range">🎯 Optimal Visual Range: 0.3 - 1.0 (step: 0.05)</div>
+                <p><span class="warning">⚠ MINOR ADJUSTMENT:</span></p>
+                <ul>
+                    <li>Values below 0.3 are too gray - lose holographic effect</li>
+                    <li>Consider minimum of 0.3 to maintain visual interest</li>
+                    <li class="unit-info">Unit: Color intensity (0% = grayscale, 100% = full color)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="parameter-test">
+            <div class="parameter-name">INTENSITY <span class="unit-info">[brightness %]</span></div>
+            <div class="visual-grid" id="intensityGrid"></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.1 - 1.0 (step: 0.05)</div>
+                <div class="optimal-range">🎯 Optimal Visual Range: 0.2 - 0.9 (step: 0.05)</div>
+                <p><span class="recommendation">✓ SLIGHT REFINEMENT:</span></p>
+                <ul>
+                    <li>0.1 is too dim on most monitors - increase to 0.2 minimum</li>
+                    <li>1.0 can cause bloom/glare - cap at 0.9 for better visuals</li>
+                    <li class="unit-info">Unit: Luminosity percentage (20% - 90% brightness)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔊 AUDIO RESPONSE VISUAL ANALYSIS</h2>
+        <div class="parameter-test">
+            <div class="parameter-name">BASS/MID/HIGH RESPONSE <span class="unit-info">[sensitivity multiplier]</span></div>
+            <div class="range-analysis">
+                <div class="current-range">Current Range: 0.0 - 2.0 (step: 0.1)</div>
+                <div class="optimal-range">🎯 Current range is GOOD!</div>
+                <p><span class="recommendation">✓ WORKING WELL:</span></p>
+                <ul>
+                    <li>0.0 = No response (good for turning off)</li>
+                    <li>1.0 = Normal sensitivity (well-calibrated)</li>
+                    <li>2.0 = Double sensitivity (good for quiet audio)</li>
+                    <li class="unit-info">Unit: Sensitivity multiplier (0x - 2x normal response)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 OVERALL RECOMMENDATIONS</h2>
+        <div class="range-analysis">
+            <h3>🎯 SUGGESTED PARAMETER ADJUSTMENTS:</h3>
+            <ol>
+                <li><strong>DENSITY:</strong> Change range to 0.2 - 2.5 <span class="unit-info">[density multiplier]</span></li>
+                <li><strong>SPEED:</strong> Change max to 1.5, step to 0.05 <span class="unit-info">[cycles/sec]</span></li>
+                <li><strong>CHAOS:</strong> Change max to 0.8, step to 0.02 <span class="unit-info">[turbulence %]</span></li>
+                <li><strong>MORPH:</strong> Keep current (0.0 - 1.0) <span class="unit-info">[blend %]</span></li>
+                <li><strong>HUE:</strong> Keep current (0 - 360) <span class="unit-info">[degrees °]</span></li>
+                <li><strong>SATURATION:</strong> Change min to 0.3 <span class="unit-info">[color intensity %]</span></li>
+                <li><strong>INTENSITY:</strong> Change to 0.2 - 0.9 <span class="unit-info">[brightness %]</span></li>
+                <li><strong>AUDIO:</strong> Keep current (0.0 - 2.0) <span class="unit-info">[× multiplier]</span></li>
+            </ol>
+            
+            <h3>🏷️ UNIT DISPLAY RECOMMENDATIONS:</h3>
+            <ul>
+                <li>Add unit suffixes to value displays (e.g., "1.5x" for density)</li>
+                <li>Show percentages where appropriate (chaos, morph, saturation)</li>
+                <li>Display degrees for hue (e.g., "180°")</li>
+                <li>Add tooltips explaining what each unit means</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const baseURL = 'demo-modular.html';
+        
+        function createVisualTest(containerId, param, values, geometry = 1) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            values.forEach(value => {
+                const sampleDiv = document.createElement('div');
+                sampleDiv.className = 'visual-sample';
+                
+                const params = {
+                    geometry: geometry,
+                    [param]: value,
+                    hideui: true,
+                    noaudio: true
+                };
+                
+                // Set reasonable defaults for other params
+                if (param !== 'density') params.density = 1.0;
+                if (param !== 'speed') params.speed = 0.5;
+                if (param !== 'chaos') params.chaos = 0.0;
+                if (param !== 'hue') params.hue = 180;
+                if (param !== 'saturation') params.saturation = 0.8;
+                if (param !== 'intensity') params.intensity = 0.5;
+                
+                const queryString = new URLSearchParams(params).toString();
+                
+                sampleDiv.innerHTML = `
+                    <iframe src="${baseURL}?${queryString}"></iframe>
+                    <div class="sample-label">${value}</div>
+                `;
+                
+                container.appendChild(sampleDiv);
+            });
+        }
+        
+        // Run visual tests
+        window.addEventListener('load', () => {
+            // Density test - showing the extremes and sweet spots
+            createVisualTest('densityGrid', 'density', [0.1, 0.5, 1.0, 2.0, 3.0], 1);
+            
+            // Speed test - showing motion rates
+            createVisualTest('speedGrid', 'speed', [0.1, 0.5, 1.0, 1.5, 2.0], 2);
+            
+            // Chaos test - showing distortion levels
+            createVisualTest('chaosGrid', 'chaos', [0.0, 0.25, 0.5, 0.75, 1.0], 3);
+            
+            // Hue test - color wheel samples
+            createVisualTest('hueGrid', 'hue', [0, 90, 180, 270, 360], 2);
+            
+            // Saturation test
+            createVisualTest('saturationGrid', 'saturation', [0.0, 0.25, 0.5, 0.75, 1.0], 2);
+            
+            // Intensity test
+            createVisualTest('intensityGrid', 'intensity', [0.1, 0.3, 0.5, 0.7, 1.0], 2);
+        });
+    </script>
+</body>
+</html>

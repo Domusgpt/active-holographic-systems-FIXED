@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parametric Engine Test</title>
+</head>
+<body>
+    <h1>Testing Parametric Engine</h1>
+    <iframe src="parametric-engine.html" width="100%" height="600" style="border: 2px solid red;"></iframe>
+    
+    <div id="error-log"></div>
+    
+    <script>
+        // Check for errors
+        window.addEventListener('error', (e) => {
+            document.getElementById('error-log').innerHTML += `<p style="color: red;">Error: ${e.message} at ${e.filename}:${e.lineno}</p>`;
+        });
+        
+        // Check iframe loading
+        const iframe = document.querySelector('iframe');
+        iframe.onload = () => {
+            console.log('Iframe loaded');
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const hasError = iframeDoc.querySelector('.error-message');
+                if (hasError) {
+                    document.getElementById('error-log').innerHTML += '<p style="color: red;">Error found in iframe</p>';
+                } else {
+                    document.getElementById('error-log').innerHTML += '<p style="color: green;">Iframe loaded successfully</p>';
+                }
+            } catch (e) {
+                document.getElementById('error-log').innerHTML += '<p style="color: orange;">Cross-origin check (normal)</p>';
+            }
+        };
+        
+        iframe.onerror = (e) => {
+            document.getElementById('error-log').innerHTML += '<p style="color: red;">Iframe failed to load</p>';
+        };
+    </script>
+</body>
+</html>

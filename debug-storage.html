@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Storage</title>
+    <style>
+        body { background: #000; color: #0ff; font-family: monospace; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #0ff; border-radius: 10px; }
+        .json-display { background: #111; padding: 10px; border-radius: 5px; white-space: pre-wrap; font-size: 12px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 DEBUG STORAGE COUNTS</h1>
+    
+    <div class="section">
+        <h3>📊 Custom Variations Storage</h3>
+        <div id="customInfo"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📊 Collection Manager Counts</h3>
+        <div id="collectionInfo"></div>
+    </div>
+    
+    <div class="section">
+        <h3>💾 Raw Custom Data</h3>
+        <div id="rawData" class="json-display"></div>
+    </div>
+    
+    <script type="module">
+        import { CollectionManager } from './src/features/CollectionManager.js';
+        
+        async function debugCounts() {
+            // Check localStorage
+            const stored = localStorage.getItem('customHolographicVariations');
+            const customDiv = document.getElementById('customInfo');
+            
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    const count = data.variations ? data.variations.length : 0;
+                    customDiv.innerHTML = `
+                        <p><strong>Custom Variations Found:</strong> ${count}</p>
+                        <p><strong>Data Size:</strong> ${Math.round(stored.length / 1024 * 100) / 100} KB</p>
+                        <p><strong>Version:</strong> ${data.version || 'unknown'}</p>
+                        <p><strong>Profile:</strong> ${data.profileName || 'unnamed'}</p>
+                        <p><strong>Timestamp:</strong> ${data.timestamp || 'unknown'}</p>
+                    `;
+                    
+                    document.getElementById('rawData').textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    customDiv.innerHTML = `<p>❌ Found corrupted data: ${e.message}</p>`;
+                    document.getElementById('rawData').textContent = stored;
+                }
+            } else {
+                customDiv.innerHTML = `<p>❌ No custom variations in localStorage</p>`;
+                document.getElementById('rawData').textContent = 'No data found';
+            }
+            
+            // Check collection manager
+            try {
+                const collectionManager = new CollectionManager();
+                const collections = await collectionManager.autoDiscoverCollections();
+                
+                let baseCount = 0;
+                collections.forEach(collection => {
+                    baseCount += collection.variations.length;
+                });
+                
+                document.getElementById('collectionInfo').innerHTML = `
+                    <p><strong>Collections Found:</strong> ${collections.length}</p>
+                    <p><strong>Base Variations:</strong> ${baseCount}</p>
+                    <p><strong>Collection Details:</strong></p>
+                    <ul>
+                        ${collections.map(col => `<li>${col.name}: ${col.variations.length} variations (${col.filename})</li>`).join('')}
+                    </ul>
+                `;
+                
+            } catch (error) {
+                document.getElementById('collectionInfo').innerHTML = `<p>❌ Error loading collections: ${error.message}</p>`;
+            }
+        }
+        
+        // Run debug on load
+        window.addEventListener('load', debugCounts);
+    </script>
+</body>
+</html>

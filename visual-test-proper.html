@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proper Visual Parameter Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body {
+            margin: 0;
+            background: #000;
+            color: #0ff;
+            font-family: 'Orbitron', monospace;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 24px;
+            color: #0ff;
+            margin-bottom: 30px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-card {
+            border: 2px solid #0ff;
+            border-radius: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.05);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 200px;
+        }
+        
+        .test-card:hover {
+            border-color: #ff0;
+            background: rgba(255, 255, 0, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .test-card h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .test-card.active {
+            border-color: #0f0;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .test-card.active h3 {
+            color: #0f0;
+        }
+        
+        .test-iframe {
+            width: 100%;
+            height: 250px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #000;
+            display: none;
+        }
+        
+        .test-card.active .test-iframe {
+            display: block;
+        }
+        
+        .test-description {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        
+        .test-card.active .test-description {
+            color: #0f0;
+        }
+        
+        .parameter-info {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+            color: #ff0;
+            font-size: 14px;
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #0ff;
+        }
+        
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #0ff;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            background: rgba(0, 255, 255, 0.3);
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-size: 12px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+        }
+        
+        .range-explanation {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #ff0;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .range-explanation h3 {
+            color: #ff0;
+            margin-bottom: 10px;
+        }
+        
+        .range-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .range-table th, .range-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+            font-size: 11px;
+        }
+        
+        .range-table th {
+            background: rgba(0, 255, 255, 0.2);
+            color: #0ff;
+        }
+        
+        .improvement {
+            color: #0f0;
+            font-weight: bold;
+        }
+        
+        .issue {
+            color: #f00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">🔬 PROPER VISUAL PARAMETER TESTING</div>
+    
+    <div class="control-panel">
+        <div style="margin-bottom: 10px; font-size: 12px; color: #0ff;">CONTROLS</div>
+        <button class="control-btn" onclick="testDensity()">Test Density</button>
+        <button class="control-btn" onclick="testSpeed()">Test Speed</button>
+        <button class="control-btn" onclick="testChaos()">Test Chaos</button>
+        <button class="control-btn" onclick="testColors()">Test Colors</button>
+        <button class="control-btn" onclick="clearAll()">Clear All</button>
+    </div>
+    
+    <div class="instructions">
+        <h3>📋 TESTING INSTRUCTIONS</h3>
+        <p>1. Click any test button to load 3 parameter variations</p>
+        <p>2. Hover over cards to see them activate and load</p>
+        <p>3. Only 1 preview loads at a time (performance optimized)</p>
+        <p>4. Compare visuals to determine optimal ranges</p>
+    </div>
+    
+    <div class="range-explanation">
+        <h3>🎯 RANGE ANALYSIS METHODOLOGY</h3>
+        <p>Since I cannot directly see the visual output, I analyzed the ranges based on:</p>
+        <table class="range-table">
+            <tr>
+                <th>Parameter</th>
+                <th>Mathematical Analysis</th>
+                <th>Performance Impact</th>
+                <th>Usability Logic</th>
+            </tr>
+            <tr>
+                <td>Density</td>
+                <td>Linear particle multiplication</td>
+                <td>0.1 = 10% particles, 3.0 = 300%</td>
+                <td class="issue">0.1 likely too sparse, 3.0 may lag</td>
+            </tr>
+            <tr>
+                <td>Speed</td>
+                <td>Animation time multiplier</td>
+                <td>Minimal performance impact</td>
+                <td class="issue">2.0 may cause motion sickness</td>
+            </tr>
+            <tr>
+                <td>Chaos</td>
+                <td>Noise amplitude factor</td>
+                <td>Adds per-vertex calculations</td>
+                <td class="issue">1.0 may destroy geometry</td>
+            </tr>
+            <tr>
+                <td>Saturation</td>
+                <td>HSL color intensity</td>
+                <td>No performance impact</td>
+                <td class="issue">0.0 removes holographic effect</td>
+            </tr>
+            <tr>
+                <td>Intensity</td>
+                <td>Brightness multiplier</td>
+                <td>No performance impact</td>
+                <td class="issue">0.1 may be too dim, 1.0 may glare</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="range-explanation">
+        <h3>🔍 HONEST ASSESSMENT</h3>
+        <p><strong>You're right - I made recommendations without visual verification.</strong></p>
+        <p>My analysis was based on:</p>
+        <ul>
+            <li>✅ Mathematical understanding of parameter functions</li>
+            <li>✅ Shader code analysis (how parameters affect rendering)</li>
+            <li>✅ Performance logic (particle count vs frame rate)</li>
+            <li>✅ HCI principles (user comfort ranges)</li>
+            <li>❌ <strong>NOT actual visual testing</strong></li>
+        </ul>
+        <p><strong>The current ranges might be perfectly fine.</strong> This tool lets YOU test them properly.</p>
+    </div>
+    
+    <div class="test-grid" id="testGrid">
+        <!-- Test cards will be dynamically added here -->
+    </div>
+    
+    <script>
+        let activeCard = null;
+        let loadedIframes = new Set();
+        
+        function createTestCard(title, params, description, id) {
+            const card = document.createElement('div');
+            card.className = 'test-card';
+            card.dataset.testId = id;
+            
+            const queryString = new URLSearchParams(params).toString();
+            const fullURL = `demo-modular.html?${queryString}&hideui=true&noaudio=true`;
+            
+            card.innerHTML = `
+                <h3>${title}</h3>
+                <div class="loading-indicator" id="loading-${id}">Click to load preview</div>
+                <iframe class="test-iframe" id="iframe-${id}" src="about:blank"></iframe>
+                <div class="test-description">${description}</div>
+                <div class="parameter-info">
+                    <strong>Parameters:</strong><br>
+                    ${Object.entries(params).map(([k,v]) => `${k}: ${v}`).join('<br>')}
+                </div>
+            `;
+            
+            card.addEventListener('click', () => activateCard(card, fullURL, id));
+            card.addEventListener('mouseenter', () => {
+                if (!card.classList.contains('active')) {
+                    card.style.borderColor = '#ff0';
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                if (!card.classList.contains('active')) {
+                    card.style.borderColor = '#0ff';
+                }
+            });
+            
+            return card;
+        }
+        
+        function activateCard(card, url, id) {
+            // Deactivate previous card
+            if (activeCard) {
+                activeCard.classList.remove('active');
+                const prevIframe = activeCard.querySelector('.test-iframe');
+                if (prevIframe) {
+                    prevIframe.src = 'about:blank';
+                }
+            }
+            
+            // Activate new card
+            card.classList.add('active');
+            activeCard = card;
+            
+            // Load iframe
+            const iframe = document.getElementById(`iframe-${id}`);
+            const loading = document.getElementById(`loading-${id}`);
+            
+            loading.textContent = 'Loading...';
+            loading.style.color = '#ff0';
+            
+            iframe.src = url;
+            iframe.onload = () => {
+                loading.textContent = 'Preview Active';
+                loading.style.color = '#0f0';
+            };
+            
+            iframe.onerror = () => {
+                loading.textContent = 'Load Error';
+                loading.style.color = '#f00';
+            };
+        }
+        
+        function clearGrid() {
+            const grid = document.getElementById('testGrid');
+            grid.innerHTML = '';
+            activeCard = null;
+        }
+        
+        function testDensity() {
+            clearGrid();
+            const grid = document.getElementById('testGrid');
+            
+            const tests = [
+                {
+                    title: "Density: 0.1 (Current Min)",
+                    params: { geometry: 1, density: 0.1, speed: 0.5, chaos: 0.0 },
+                    description: "Test if minimum density is visible enough",
+                    id: "density-min"
+                },
+                {
+                    title: "Density: 1.5 (Sweet Spot)",
+                    params: { geometry: 1, density: 1.5, speed: 0.5, chaos: 0.0 },
+                    description: "Test proposed optimal density",
+                    id: "density-mid"
+                },
+                {
+                    title: "Density: 3.0 (Current Max)",
+                    params: { geometry: 1, density: 3.0, speed: 0.5, chaos: 0.0 },
+                    description: "Test if maximum density causes lag",
+                    id: "density-max"
+                }
+            ];
+            
+            tests.forEach(test => {
+                grid.appendChild(createTestCard(test.title, test.params, test.description, test.id));
+            });
+        }
+        
+        function testSpeed() {
+            clearGrid();
+            const grid = document.getElementById('testGrid');
+            
+            const tests = [
+                {
+                    title: "Speed: 0.1 (Min)",
+                    params: { geometry: 2, density: 1.0, speed: 0.1, chaos: 0.0 },
+                    description: "Test minimum speed - is it too slow?",
+                    id: "speed-min"
+                },
+                {
+                    title: "Speed: 1.0 (Medium)",
+                    params: { geometry: 2, density: 1.0, speed: 1.0, chaos: 0.0 },
+                    description: "Test medium speed - comfortable viewing?",
+                    id: "speed-mid"
+                },
+                {
+                    title: "Speed: 2.0 (Current Max)",
+                    params: { geometry: 2, density: 1.0, speed: 2.0, chaos: 0.0 },
+                    description: "Test max speed - does it cause discomfort?",
+                    id: "speed-max"
+                }
+            ];
+            
+            tests.forEach(test => {
+                grid.appendChild(createTestCard(test.title, test.params, test.description, test.id));
+            });
+        }
+        
+        function testChaos() {
+            clearGrid();
+            const grid = document.getElementById('testGrid');
+            
+            const tests = [
+                {
+                    title: "Chaos: 0.0 (Perfect Order)",
+                    params: { geometry: 3, density: 1.0, speed: 0.5, chaos: 0.0 },
+                    description: "No chaos - perfect geometry",
+                    id: "chaos-min"
+                },
+                {
+                    title: "Chaos: 0.5 (Medium Distortion)",
+                    params: { geometry: 3, density: 1.0, speed: 0.5, chaos: 0.5 },
+                    description: "Medium chaos - is geometry still recognizable?",
+                    id: "chaos-mid"
+                },
+                {
+                    title: "Chaos: 1.0 (Max Chaos)",
+                    params: { geometry: 3, density: 1.0, speed: 0.5, chaos: 1.0 },
+                    description: "Maximum chaos - is geometry destroyed?",
+                    id: "chaos-max"
+                }
+            ];
+            
+            tests.forEach(test => {
+                grid.appendChild(createTestCard(test.title, test.params, test.description, test.id));
+            });
+        }
+        
+        function testColors() {
+            clearGrid();
+            const grid = document.getElementById('testGrid');
+            
+            const tests = [
+                {
+                    title: "Saturation: 0.0 (Grayscale)",
+                    params: { geometry: 2, density: 1.0, saturation: 0.0, intensity: 0.5 },
+                    description: "No saturation - does it lose holographic effect?",
+                    id: "color-gray"
+                },
+                {
+                    title: "Intensity: 0.1 (Very Dim)",
+                    params: { geometry: 2, density: 1.0, saturation: 0.8, intensity: 0.1 },
+                    description: "Minimum intensity - is it visible?",
+                    id: "color-dim"
+                },
+                {
+                    title: "Intensity: 1.0 (Max Bright)",
+                    params: { geometry: 2, density: 1.0, saturation: 0.8, intensity: 1.0 },
+                    description: "Maximum intensity - does it cause glare?",
+                    id: "color-bright"
+                }
+            ];
+            
+            tests.forEach(test => {
+                grid.appendChild(createTestCard(test.title, test.params, test.description, test.id));
+            });
+        }
+        
+        function clearAll() {
+            clearGrid();
+        }
+        
+        // Initialize with density test
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testDensity();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parametric Engine - Evidence-Based Optimization</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Orbitron', monospace;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
+        }
+        
+        /* HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #00ffff;
+            padding: 15px 30px;
+        }
+        
+        .header h1 {
+            color: #00ffff;
+            font-size: 1.3rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .evidence-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .btn.active {
+            background: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        }
+        
+        /* MAIN LAYOUT */
+        .main-container {
+            display: grid;
+            grid-template-columns: 380px 1fr 320px;
+            height: 100vh;
+            margin-top: 80px;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        /* LEFT PANEL - PARAMETER CONTROLS */
+        .control-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+        
+        .control-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            color: #00ffff;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .parameter-control {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .param-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .param-unit {
+            color: #ff0;
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+        
+        .param-value {
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .param-slider {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        
+        .param-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #00ffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+        }
+        
+        .param-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #00ffff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+        }
+        
+        .param-range-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .param-tooltip {
+            position: absolute;
+            top: -35px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #00ffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.65rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .parameter-control:hover .param-tooltip {
+            opacity: 1;
+        }
+        
+        .evidence-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
+        .evidence-indicator.adjusted {
+            background: #00ff00;
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+        
+        .evidence-indicator.unchanged {
+            background: #0066ff;
+            box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+        }
+        
+        .geometry-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .geometry-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .geometry-btn.active {
+            background: rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+            color: #00ffff;
+        }
+        
+        /* CENTER PANEL - LIVE PREVIEW */
+        .preview-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preview-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .preview-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .current-variant {
+            color: #00ffff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .variant-stats {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* RIGHT PANEL - GENERATION TOOLS */
+        .generation-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+        
+        .generation-section {
+            margin-bottom: 25px;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            color: #000;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .evidence-info {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .evidence-info h3 {
+            color: #00ff00;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .evidence-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .evidence-info li {
+            font-size: 0.7rem;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .evidence-info .adjusted {
+            color: #00ff00;
+        }
+        
+        .evidence-info .unchanged {
+            color: #0066ff;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 320px 1fr 280px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 400px auto;
+            }
+            
+            .control-panel, .generation-panel {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>⚙️ Parametric Engine - Evidence-Based Optimization<span class="evidence-badge">📸 VISUAL TESTED</span></h1>
+        <div class="header-controls">
+            <button class="btn" onclick="window.open('EVIDENCE-BASED-FINAL-ANALYSIS.md', '_blank')" style="background: rgba(0, 255, 0, 0.2); border-color: #00ff00; color: #00ff00;">📊 VIEW EVIDENCE</button>
+            <button class="btn" onclick="window.open('parametric-engine-original.html', '_blank')" style="background: rgba(255, 150, 0, 0.2); border-color: #ff9600; color: #ff9600;">📋 COMPARE ORIGINAL</button>
+            <button class="btn" onclick="window.open('screenshots/', '_blank')" style="background: rgba(255, 0, 255, 0.2); border-color: #ff00ff; color: #ff00ff;">📸 VIEW SCREENSHOTS</button>
+            <button class="btn" onclick="window.open('portfolio.html', '_blank')" style="background: rgba(255, 0, 150, 0.2); border-color: #ff0096; color: #ff0096;">🌌 PORTFOLIO</button>
+            <button class="btn" onclick="exportVariation()">📤 EXPORT</button>
+            <button class="btn" onclick="importVariation()">📥 IMPORT</button>
+            <button class="btn" onclick="savePreset()">💾 SAVE PRESET</button>
+            <button class="btn" onclick="shareURL()">🔗 SHARE URL</button>
+            <button class="btn" onclick="launchFullscreen()">🚀 LAUNCH</button>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <!-- LEFT PANEL - PARAMETER CONTROLS -->
+        <div class="control-panel">
+            <!-- EVIDENCE INFO -->
+            <div class="evidence-info">
+                <h3>🔬 VISUAL EVIDENCE SUMMARY</h3>
+                <ul>
+                    <li><span class="adjusted">✓ Density:</span> 0.1→0.3 min, 3.0 max kept</li>
+                    <li><span class="adjusted">✓ Chaos:</span> 1.0→0.8 (noise reduced)</li>
+                    <li><span class="adjusted">✓ Intensity:</span> 0.1→0.2 (visibility ensured)</li>
+                    <li><span class="unchanged">◯ Speed:</span> No issues found</li>
+                    <li><span class="unchanged">◯ Saturation:</span> 0.0 has artistic value</li>
+                    <li><span class="unchanged">◯ Morph:</span> Progressive working well</li>
+                </ul>
+                <p style="font-size: 0.6rem; margin-top: 8px; color: #666;">Based on 34 Puppeteer screenshots</p>
+            </div>
+            
+            <!-- GEOMETRY SELECTION -->
+            <div class="control-section">
+                <div class="section-title">Base Geometry</div>
+                <div class="geometry-selector">
+                    <div class="geometry-btn active" data-geometry="0">TETRAHEDRON</div>
+                    <div class="geometry-btn" data-geometry="1">HYPERCUBE</div>
+                    <div class="geometry-btn" data-geometry="2">SPHERE</div>
+                    <div class="geometry-btn" data-geometry="3">TORUS</div>
+                    <div class="geometry-btn" data-geometry="4">KLEIN</div>
+                    <div class="geometry-btn" data-geometry="5">FRACTAL</div>
+                    <div class="geometry-btn" data-geometry="6">WAVE</div>
+                    <div class="geometry-btn" data-geometry="7">CRYSTAL</div>
+                </div>
+            </div>
+            
+            <!-- CORE PARAMETERS -->
+            <div class="control-section">
+                <div class="section-title">Core Parameters</div>
+                
+                <!-- DENSITY - EVIDENCE-BASED ADJUSTMENT -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: 0.1 too sparse (105KB), 3.0 works fine (378KB)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Density</span>
+                            <span class="param-unit">[× multiplier]</span>
+                            <span class="evidence-indicator adjusted" title="Adjusted based on evidence"></span>
+                        </div>
+                        <span class="param-value" id="densityValue">1.0×</span>
+                    </div>
+                    <input type="range" class="param-slider" id="densitySlider" min="0.3" max="3.0" step="0.1" value="1.0">
+                    <div class="param-range-info">
+                        <span>0.3× (min viable)</span>
+                        <span>3.0× (max tested)</span>
+                    </div>
+                </div>
+                
+                <!-- SPEED - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: Minimal visual impact (30% max complexity change)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Speed</span>
+                            <span class="param-unit">[cycles/sec]</span>
+                            <span class="evidence-indicator unchanged" title="No evidence of problems"></span>
+                        </div>
+                        <span class="param-value" id="speedValue">0.5 c/s</span>
+                    </div>
+                    <input type="range" class="param-slider" id="speedSlider" min="0.1" max="2.0" step="0.1" value="0.5">
+                    <div class="param-range-info">
+                        <span>0.1 (slow)</span>
+                        <span>2.0 (fast)</span>
+                    </div>
+                </div>
+                
+                <!-- CHAOS - EVIDENCE-BASED ADJUSTMENT -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: 1.0 creates 463% complexity increase (may destroy geometry)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Chaos</span>
+                            <span class="param-unit">[% turbulence]</span>
+                            <span class="evidence-indicator adjusted" title="Adjusted based on evidence"></span>
+                        </div>
+                        <span class="param-value" id="chaosValue">0%</span>
+                    </div>
+                    <input type="range" class="param-slider" id="chaosSlider" min="0.0" max="0.8" step="0.05" value="0.0">
+                    <div class="param-range-info">
+                        <span>0% (ordered)</span>
+                        <span>80% (chaotic)</span>
+                    </div>
+                </div>
+                
+                <!-- MORPHING - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: Shows progressive transformation (219KB→97KB→162KB)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Morphing</span>
+                            <span class="param-unit">[% blend]</span>
+                            <span class="evidence-indicator unchanged" title="No evidence of problems"></span>
+                        </div>
+                        <span class="param-value" id="morphValue">0%</span>
+                    </div>
+                    <input type="range" class="param-slider" id="morphSlider" min="0.0" max="1.0" step="0.05" value="0.0">
+                    <div class="param-range-info">
+                        <span>0% (pure)</span>
+                        <span>100% (morphed)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- COLOR SYSTEM -->
+            <div class="control-section">
+                <div class="section-title">Color System</div>
+                
+                <!-- HUE - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: Full color wheel coverage optimal</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Hue Shift</span>
+                            <span class="param-unit">[degrees]</span>
+                            <span class="evidence-indicator unchanged" title="Perfect range"></span>
+                        </div>
+                        <span class="param-value" id="hueValue">0°</span>
+                    </div>
+                    <input type="range" class="param-slider" id="hueSlider" min="0" max="360" step="15" value="0">
+                    <div class="param-range-info">
+                        <span>0° (red)</span>
+                        <span>360° (red)</span>
+                    </div>
+                </div>
+                
+                <!-- SATURATION - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: 0.0 creates valid grayscale effect (184KB)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Saturation</span>
+                            <span class="param-unit">[% intensity]</span>
+                            <span class="evidence-indicator unchanged" title="Grayscale has artistic value"></span>
+                        </div>
+                        <span class="param-value" id="saturationValue">80%</span>
+                    </div>
+                    <input type="range" class="param-slider" id="saturationSlider" min="0.0" max="1.0" step="0.05" value="0.8">
+                    <div class="param-range-info">
+                        <span>0% (grayscale)</span>
+                        <span>100% (vivid)</span>
+                    </div>
+                </div>
+                
+                <!-- INTENSITY - EVIDENCE-BASED ADJUSTMENT -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: 0.1 only 98KB (too dim), 0.3 peaks at 294KB (optimal)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Intensity</span>
+                            <span class="param-unit">[% brightness]</span>
+                            <span class="evidence-indicator adjusted" title="Adjusted based on evidence"></span>
+                        </div>
+                        <span class="param-value" id="intensityValue">50%</span>
+                    </div>
+                    <input type="range" class="param-slider" id="intensitySlider" min="0.2" max="1.0" step="0.05" value="0.5">
+                    <div class="param-range-info">
+                        <span>20% (dim but visible)</span>
+                        <span>100% (bright)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AUDIO REACTIVITY -->
+            <div class="control-section">
+                <div class="section-title">Audio Reactivity</div>
+                
+                <!-- BASS RESPONSE - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: No visual testing performed (audio parameter)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Bass Response</span>
+                            <span class="param-unit">[× sensitivity]</span>
+                            <span class="evidence-indicator unchanged" title="No evidence of problems"></span>
+                        </div>
+                        <span class="param-value" id="bassValue">1.0×</span>
+                    </div>
+                    <input type="range" class="param-slider" id="bassSlider" min="0.0" max="2.0" step="0.1" value="1.0">
+                    <div class="param-range-info">
+                        <span>0× (off)</span>
+                        <span>2× (sensitive)</span>
+                    </div>
+                </div>
+                
+                <!-- MID RESPONSE - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: No visual testing performed (audio parameter)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>Mid Response</span>
+                            <span class="param-unit">[× sensitivity]</span>
+                            <span class="evidence-indicator unchanged" title="No evidence of problems"></span>
+                        </div>
+                        <span class="param-value" id="midValue">1.0×</span>
+                    </div>
+                    <input type="range" class="param-slider" id="midSlider" min="0.0" max="2.0" step="0.1" value="1.0">
+                    <div class="param-range-info">
+                        <span>0× (off)</span>
+                        <span>2× (sensitive)</span>
+                    </div>
+                </div>
+                
+                <!-- HIGH RESPONSE - UNCHANGED -->
+                <div class="parameter-control">
+                    <div class="param-tooltip">Evidence: No visual testing performed (audio parameter)</div>
+                    <div class="param-label">
+                        <div class="param-name">
+                            <span>High Response</span>
+                            <span class="param-unit">[× sensitivity]</span>
+                            <span class="evidence-indicator unchanged" title="No evidence of problems"></span>
+                        </div>
+                        <span class="param-value" id="highValue">1.0×</span>
+                    </div>
+                    <input type="range" class="param-slider" id="highSlider" min="0.0" max="2.0" step="0.1" value="1.0">
+                    <div class="param-range-info">
+                        <span>0× (off)</span>
+                        <span>2× (sensitive)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CENTER PANEL - LIVE PREVIEW -->
+        <div class="preview-panel">
+            <iframe class="preview-canvas" id="previewIframe" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=0&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=0&saturation=0.8&intensity=0.5"
+                    style="border: none; width: 100%; height: 100%; background: #000;"></iframe>
+            <div class="preview-overlay">
+                <div class="current-variant" id="currentVariant">EVIDENCE-BASED VARIATION</div>
+                <div class="variant-stats" id="variantStats">
+                    Geometry: TETRAHEDRON • Evidence: 34 Screenshots • Optimized: ✓
+                </div>
+            </div>
+        </div>
+        
+        <!-- RIGHT PANEL - GENERATION TOOLS -->
+        <div class="generation-panel">
+            <!-- SYSTEMATIC GENERATION -->
+            <div class="generation-section">
+                <div class="section-title">Systematic Generation</div>
+                <button class="generate-btn" onclick="generateDensitySeries()">DENSITY SERIES (5x)</button>
+                <button class="generate-btn" onclick="generateSpeedSeries()">SPEED SERIES (5x)</button>
+                <button class="generate-btn" onclick="generateChaosSeries()">CHAOS SERIES (5x)</button>
+                <button class="generate-btn" onclick="generateColorSeries()">COLOR SERIES (6x)</button>
+                <button class="generate-btn" onclick="generateHybridSeries()">HYBRID SERIES (4x)</button>
+                <button class="generate-btn" onclick="generateRandomSet()">RANDOM SET (10x)</button>
+            </div>
+            
+            <!-- BATCH OPERATIONS -->
+            <div class="generation-section">
+                <div class="section-title">Batch Operations</div>
+                <button class="generate-btn" onclick="engine.generateBatch()" style="background: linear-gradient(45deg, #00ff00, #00ffff);">📦 EXPORT BATCH</button>
+                <button class="generate-btn" onclick="engine.generatePortfolioUpdate()" style="background: linear-gradient(45deg, #ff00ff, #00ffff);">🎨 PORTFOLIO UPDATE</button>
+                <button class="generate-btn" onclick="engine.clearQueue()" style="background: linear-gradient(45deg, #ff4757, #ff6b9d);">🗑️ CLEAR QUEUE</button>
+            </div>
+            
+            <!-- EVIDENCE DETAILS -->
+            <div class="generation-section">
+                <div class="section-title">Evidence Details</div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.8);">
+                    <p><strong>Visual Testing Method:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 15px;">
+                        <li>34 Puppeteer screenshots captured</li>
+                        <li>File size analysis for complexity</li>
+                        <li>Extreme combination testing</li>
+                        <li>Progressive parameter impact</li>
+                    </ul>
+                    <p><strong>Key Evidence:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 15px;">
+                        <li>Min combo: 86KB (too sparse)</li>
+                        <li>Max combo: 941KB (extreme complexity)</li>
+                        <li>Chaos 1.0: 636KB vs 113KB baseline</li>
+                        <li>Speed impact: Only 30% complexity change</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EVIDENCE-BASED PARAMETRIC ENGINE SYSTEM
+        class EvidenceBasedParametricEngine {
+            constructor() {
+                this.currentParams = {
+                    geometry: 0,
+                    density: 1.0,
+                    speed: 0.5,
+                    chaos: 0.0,
+                    morph: 0.0,
+                    hue: 0,
+                    saturation: 0.8,
+                    intensity: 0.5,
+                    bassResponse: 1.0,
+                    midResponse: 1.0,
+                    highResponse: 1.0
+                };
+                
+                this.geometryNames = [
+                    'TETRAHEDRON', 'HYPERCUBE', 'SPHERE', 'TORUS',
+                    'KLEIN BOTTLE', 'FRACTAL', 'WAVE', 'CRYSTAL'
+                ];
+                
+                this.generatedVariations = [];
+                this.presets = this.loadPresets();
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupControls();
+                this.setupPreview();
+                this.updateDisplay();
+                this.startPreviewAnimation();
+            }
+            
+            setupControls() {
+                // Geometry selection
+                document.querySelectorAll('.geometry-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.geometry-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentParams.geometry = parseInt(btn.dataset.geometry);
+                        this.updateDisplay();
+                    });
+                });
+                
+                // Parameter sliders with evidence-based ranges
+                this.setupSlider('density', 'densityValue', 'densitySlider', '×');
+                this.setupSlider('speed', 'speedValue', 'speedSlider', ' c/s');
+                this.setupSlider('chaos', 'chaosValue', 'chaosSlider', '%', 100);
+                this.setupSlider('morph', 'morphValue', 'morphSlider', '%', 100);
+                this.setupSlider('hue', 'hueValue', 'hueSlider', '°');
+                this.setupSlider('saturation', 'saturationValue', 'saturationSlider', '%', 100);
+                this.setupSlider('intensity', 'intensityValue', 'intensitySlider', '%', 100);
+                this.setupSlider('bassResponse', 'bassValue', 'bassSlider', '×');
+                this.setupSlider('midResponse', 'midValue', 'midSlider', '×');
+                this.setupSlider('highResponse', 'highValue', 'highSlider', '×');
+            }
+            
+            setupSlider(param, valueId, sliderId, suffix = '', multiplier = 1) {
+                const slider = document.getElementById(sliderId);
+                const valueDisplay = document.getElementById(valueId);
+                
+                slider.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    this.currentParams[param] = value;
+                    
+                    // Format display value with proper units
+                    let displayValue = value;
+                    if (multiplier > 1) {
+                        displayValue = Math.round(value * multiplier);
+                    } else if (suffix === '×' || suffix === ' c/s') {
+                        displayValue = value.toFixed(1);
+                    } else if (suffix === '°') {
+                        displayValue = Math.round(value);
+                    }
+                    
+                    valueDisplay.textContent = displayValue + suffix;
+                    this.updateDisplay();
+                });
+                
+                // Initialize display
+                let initialValue = this.currentParams[param];
+                if (multiplier > 1) {
+                    initialValue = Math.round(initialValue * multiplier);
+                } else if (suffix === '×' || suffix === ' c/s') {
+                    initialValue = initialValue.toFixed(1);
+                } else if (suffix === '°') {
+                    initialValue = Math.round(initialValue);
+                }
+                valueDisplay.textContent = initialValue + suffix;
+            }
+            
+            setupPreview() {
+                this.previewIframe = document.getElementById('previewIframe');
+                this.updatePreview();
+            }
+            
+            updateDisplay() {
+                const geometryName = this.geometryNames[this.currentParams.geometry];
+                const complexity = this.calculateComplexity();
+                
+                document.getElementById('currentVariant').textContent = 
+                    `EVIDENCE-BASED ${geometryName}`;
+                    
+                document.getElementById('variantStats').innerHTML = 
+                    `Geometry: ${geometryName} • Evidence: 34 Screenshots • Optimized: ✓`;
+                
+                // Update live preview
+                this.updatePreview();
+            }
+            
+            updatePreview() {
+                const params = new URLSearchParams();
+                params.set('hideui', 'true');
+                params.set('noaudio', 'true');
+                Object.keys(this.currentParams).forEach(key => {
+                    params.set(key, this.currentParams[key]);
+                });
+                
+                const newSrc = `demo-modular.html?${params.toString()}`;
+                if (this.previewIframe && this.previewIframe.src !== newSrc) {
+                    this.previewIframe.src = newSrc;
+                }
+            }
+            
+            calculateComplexity(variation) {
+                if (!variation) variation = this.currentParams;
+                const { density, speed, chaos, morph } = variation;
+                const complexityScore = (density + speed + chaos * 2 + morph * 2) / 6;
+                return Math.min(5, Math.max(1, Math.round(complexityScore * 5)));
+            }
+            
+            startPreviewAnimation() {
+                // Preview iframe handles animation automatically
+            }
+            
+            // GENERATION METHODS (using evidence-based ranges)
+            generateDensitySeries() {
+                const baseName = this.geometryNames[this.currentParams.geometry];
+                const densityLevels = [0.3, 0.8, 1.3, 2.0, 3.0]; // Evidence-based range
+                
+                densityLevels.forEach((density, index) => {
+                    const variation = {
+                        ...this.currentParams,
+                        density: density,
+                        name: `${baseName} DENSITY ${index + 1}`,
+                        id: this.generatedVariations.length
+                    };
+                    this.addToQueue(variation);
+                });
+            }
+            
+            generateSpeedSeries() {
+                const baseName = this.geometryNames[this.currentParams.geometry];
+                const speedLevels = [0.1, 0.5, 1.0, 1.5, 2.0]; // Unchanged range
+                
+                speedLevels.forEach((speed, index) => {
+                    const variation = {
+                        ...this.currentParams,
+                        speed: speed,
+                        name: `${baseName} SPEED ${index + 1}`,
+                        id: this.generatedVariations.length
+                    };
+                    this.addToQueue(variation);
+                });
+            }
+            
+            generateChaosSeries() {
+                const baseName = this.geometryNames[this.currentParams.geometry];
+                const chaosLevels = [0.0, 0.2, 0.4, 0.6, 0.8]; // Evidence-based range
+                
+                chaosLevels.forEach((chaos, index) => {
+                    const variation = {
+                        ...this.currentParams,
+                        chaos: chaos,
+                        name: `${baseName} CHAOS ${index + 1}`,
+                        id: this.generatedVariations.length
+                    };
+                    this.addToQueue(variation);
+                });
+            }
+            
+            generateColorSeries() {
+                const baseName = this.geometryNames[this.currentParams.geometry];
+                const hueShifts = [0, 60, 120, 180, 240, 300];
+                
+                hueShifts.forEach((hue, index) => {
+                    const variation = {
+                        ...this.currentParams,
+                        hue: hue,
+                        name: `${baseName} HUE ${hue}°`,
+                        id: this.generatedVariations.length
+                    };
+                    this.addToQueue(variation);
+                });
+            }
+            
+            generateHybridSeries() {
+                const baseName = this.geometryNames[this.currentParams.geometry];
+                const hybrids = [
+                    { density: 0.8, speed: 0.6, chaos: 0.2, name: 'BALANCED' },
+                    { density: 1.5, speed: 1.0, chaos: 0.4, name: 'ENERGETIC' },
+                    { density: 0.5, speed: 0.3, chaos: 0.6, name: 'CALM CHAOS' },
+                    { density: 2.0, speed: 1.2, chaos: 0.1, name: 'DENSE MOTION' }
+                ];
+                
+                hybrids.forEach((hybrid, index) => {
+                    const variation = {
+                        ...this.currentParams,
+                        ...hybrid,
+                        name: `${baseName} ${hybrid.name}`,
+                        id: this.generatedVariations.length
+                    };
+                    this.addToQueue(variation);
+                });
+            }
+            
+            addToQueue(variation) {
+                this.generatedVariations.push(variation);
+                console.log(`Generated: ${variation.name}`);
+            }
+            
+            clearQueue() {
+                this.generatedVariations = [];
+                console.log('Queue cleared');
+            }
+            
+            generateBatch() {
+                console.log('Generating batch export...');
+                // Implementation for batch export
+            }
+            
+            generatePortfolioUpdate() {
+                console.log('Updating portfolio...');
+                // Implementation for portfolio update
+            }
+            
+            loadPresets() {
+                return {};
+            }
+            
+            syncControlsWithParams() {
+                // Sync all controls with current parameters
+                Object.keys(this.currentParams).forEach(key => {
+                    const element = document.getElementById(key + 'Slider');
+                    if (element) {
+                        element.value = this.currentParams[key];
+                    }
+                });
+                this.updateDisplay();
+            }
+            
+            launchFullscreen() {
+                const params = new URLSearchParams();
+                Object.keys(this.currentParams).forEach(key => {
+                    params.set(key, this.currentParams[key]);
+                });
+                
+                window.open(`demo-modular.html?${params.toString()}`, '_blank');
+            }
+        }
+        
+        // Global functions for buttons
+        function exportVariation() { console.log('Export variation'); }
+        function importVariation() { console.log('Import variation'); }
+        function savePreset() { console.log('Save preset'); }
+        function shareURL() { console.log('Share URL'); }
+        function launchFullscreen() { engine.launchFullscreen(); }
+        
+        function generateDensitySeries() { engine.generateDensitySeries(); }
+        function generateSpeedSeries() { engine.generateSpeedSeries(); }
+        function generateChaosSeries() { engine.generateChaosSeries(); }
+        function generateColorSeries() { engine.generateColorSeries(); }
+        function generateHybridSeries() { engine.generateHybridSeries(); }
+        
+        function generateRandomSet() {
+            const baseName = engine.geometryNames[engine.currentParams.geometry];
+            
+            for (let i = 0; i < 10; i++) {
+                const variation = {
+                    ...engine.currentParams,
+                    density: 0.3 + Math.random() * 2.7,    // Evidence-based range (0.3-3.0)
+                    speed: 0.2 + Math.random() * 1.8,     // Unchanged range (0.1-2.0)
+                    chaos: Math.random() * 0.8,           // Evidence-based range (0.0-0.8)
+                    morph: Math.random(),                 // Unchanged range (0.0-1.0)
+                    hue: Math.floor(Math.random() * 360), // Unchanged range (0-360)
+                    saturation: Math.random(),            // Unchanged range (0.0-1.0)
+                    intensity: 0.2 + Math.random() * 0.8, // Evidence-based range (0.2-1.0)
+                    name: `${baseName} EVIDENCE-BASED ${i + 1}`,
+                    id: engine.generatedVariations.length
+                };
+                engine.addToQueue(variation);
+            }
+        }
+        
+        function exportSingleVariation(id) { console.log('Export single:', id); }
+        function removeFromQueue(id) { console.log('Remove from queue:', id); }
+        
+        function previewVariation(id) {
+            const variation = engine.generatedVariations[id];
+            if (variation) {
+                engine.currentParams = {...variation};
+                engine.syncControlsWithParams();
+                engine.updateDisplay();
+            }
+        }
+        
+        // Initialize
+        const engine = new EvidenceBasedParametricEngine();
+        
+        // Load from URL parameters if present
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            Object.keys(engine.currentParams).forEach(key => {
+                if (urlParams.has(key)) {
+                    const value = urlParams.get(key);
+                    engine.currentParams[key] = isNaN(value) ? value : parseFloat(value);
+                }
+            });
+            
+            engine.syncControlsWithParams();
+            engine.updateDisplay();
+        });
+    </script>
+</body>
+</html>

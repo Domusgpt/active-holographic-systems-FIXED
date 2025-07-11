@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAOS Parameter Test</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .chaos-test {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .chaos-item {
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .chaos-item h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+        
+        .chaos-preview {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .chaos-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .title {
+            text-align: center;
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            text-align: center;
+            background: rgba(0, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #0ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">🌀 CHAOS PARAMETER TEST</div>
+    
+    <div class="instructions">
+        <h3>What you should see:</h3>
+        <p><strong>CHAOS 0.0:</strong> Clean, sharp geometric patterns</p>
+        <p><strong>CHAOS 0.25:</strong> Slight waviness and distortion</p>
+        <p><strong>CHAOS 0.5:</strong> Moderate organic distortion</p>
+        <p><strong>CHAOS 0.75:</strong> Heavy turbulence</p>
+        <p><strong>CHAOS 1.0:</strong> Maximum chaos and noise</p>
+        <p><em>Each should look visibly different from the others</em></p>
+    </div>
+    
+    <div class="chaos-test">
+        <div class="chaos-item">
+            <h3>CHAOS: 0.0</h3>
+            <iframe class="chaos-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.0&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="chaos-info">
+                <strong>CLEAN</strong><br>
+                Perfect geometry
+            </div>
+        </div>
+        
+        <div class="chaos-item">
+            <h3>CHAOS: 0.25</h3>
+            <iframe class="chaos-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.25&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="chaos-info">
+                <strong>SLIGHT</strong><br>
+                Minor waviness
+            </div>
+        </div>
+        
+        <div class="chaos-item">
+            <h3>CHAOS: 0.5</h3>
+            <iframe class="chaos-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.5&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="chaos-info">
+                <strong>MODERATE</strong><br>
+                Organic distortion
+            </div>
+        </div>
+        
+        <div class="chaos-item">
+            <h3>CHAOS: 0.75</h3>
+            <iframe class="chaos-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=0.75&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="chaos-info">
+                <strong>HEAVY</strong><br>
+                Turbulent patterns
+            </div>
+        </div>
+        
+        <div class="chaos-item">
+            <h3>CHAOS: 1.0</h3>
+            <iframe class="chaos-preview" 
+                    src="demo-modular.html?hideui=true&noaudio=true&geometry=1&density=1.0&speed=0.5&chaos=1.0&morph=0.0&hue=120&saturation=0.8&intensity=0.5" 
+                    style="border: none; background: #000;"></iframe>
+            <div class="chaos-info">
+                <strong>MAXIMUM</strong><br>
+                Pure chaos
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h3>🔍 ANALYSIS:</h3>
+        <p><strong>If working correctly:</strong> Each box should show progressively more distorted/chaotic patterns</p>
+        <p><strong>If broken:</strong> All boxes look identical or chaos has no visible effect</p>
+        <p><em>The chaos parameter adds noise and distortion to break up the clean geometric patterns</em></p>
+    </div>
+</body>
+</html>
